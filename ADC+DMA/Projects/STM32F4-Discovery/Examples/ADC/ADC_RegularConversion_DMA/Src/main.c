@@ -59,6 +59,19 @@ ADC_HandleTypeDef    AdcHandle;
 /* Variable used to get converted value */
 __IO uint32_t uhADCxConvertedValue[SAMPLES_SIZE];
 
+volatile bool conversion_done = false;
+
+/** 
+ * Structure that contains information about the fft.
+ */
+static arm_rfft_fast_instance_f32 S;
+
+/**
+ * The FFT result. It's half the size needed because the function will ignore 
+ * the seconde half of the computation.
+ */
+static float fft_out[SAMPLES_SIZE];
+
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
@@ -130,9 +143,21 @@ int main(void)
     Error_Handler(); 
   }
   
+  conversion_done = false;
+  
   /* Infinite loop */
   while (1)
   {
+      if( conversion_done == true )
+      {
+          conversion_done = false;
+          arm_rfft_fast_init_f32( &S, SAMPLES_SIZE );
+          arm_rfft_fast_f32( &S, ( float * ) uhADCxConvertedValue, fft_out, 0 );
+          /* after this point the result of fft wil be in fft_out */
+      }
+      else
+      {
+      }/* end if-else */
   }
 }
 
@@ -216,7 +241,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* AdcHandle)
   /* Turn LED4 on: Transfer process is correct */
   HAL_ADC_Stop_DMA(AdcHandle);
   BSP_LED_On(LED4);
- 
+    conversion_done = true;
 }
 
 #ifdef  USE_FULL_ASSERT

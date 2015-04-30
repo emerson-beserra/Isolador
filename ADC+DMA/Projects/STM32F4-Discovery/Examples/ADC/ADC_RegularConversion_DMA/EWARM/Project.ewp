@@ -60,8 +60,8 @@
         </option>
         <option>
           <name>FPU</name>
-          <version>4</version>
-          <state>6</state>
+          <version>2</version>
+          <state>0</state>
         </option>
         <option>
           <name>OGCoreOrChip</name>
@@ -87,7 +87,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>7.40.1.8463</state>
+          <state>7.30.1.7765</state>
         </option>
         <option>
           <name>GeneralEnableMisra</name>
@@ -151,7 +151,7 @@
         </option>
         <option>
           <name>OGUseCmsisDspLib</name>
-          <state>0</state>
+          <state>1</state>
         </option>
         <option>
           <name>GRuntimeLibThreads</name>
@@ -616,7 +616,6 @@
       <data>
         <extensions></extensions>
         <cmdline></cmdline>
-        <hasPrio>0</hasPrio>
       </data>
     </settings>
     <settings>

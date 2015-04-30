@@ -19,22 +19,6 @@
 @REM 
 
 
-@echo off 
+"C:\Program Files\IAR Systems\Embedded Workbench 7.0\common\bin\cspybat" "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\bin\armproc.dll" "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\bin\armstlink.dll"  %1 --plugin "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\bin\armbat.dll" --device_macro "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\config\debugger\ST\STM32F4xx.dmac" --flash_loader "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\config\flashloader\ST\FlashSTM32F4xxx.board" --backend -B "--endian=little" "--cpu=Cortex-M4F" "--fpu=None" "-p" "C:\Program Files\IAR Systems\Embedded Workbench 7.0\arm\CONFIG\debugger\ST\STM32F407VG.ddf" "--semihosting" "--device=STM32F407VG" "--stlink_interface=SWD" "--stlink_reset_strategy=0,2" "--drv_swo_clock_setup=144000000,0,2000000" 
 
-if not "%1" == "" goto debugFile 
 
-@echo on 
-
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\Jr\Downloads\STM32Cube_FW_F4_V1.3.0\Projects\STM32F4-Discovery\Examples\ADC\ADC_RegularConversion_DMA\EWARM\settings\Project.STM32F4-Discovery.general.xcl" --backend -f "C:\Users\Jr\Downloads\STM32Cube_FW_F4_V1.3.0\Projects\STM32F4-Discovery\Examples\ADC\ADC_RegularConversion_DMA\EWARM\settings\Project.STM32F4-Discovery.driver.xcl" 
-
-@echo off 
-goto end 
-
-:debugFile 
-
-@echo on 
-
-"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.2\common\bin\cspybat" -f "C:\Users\Jr\Downloads\STM32Cube_FW_F4_V1.3.0\Projects\STM32F4-Discovery\Examples\ADC\ADC_RegularConversion_DMA\EWARM\settings\Project.STM32F4-Discovery.general.xcl" "--debug_file=%1" --backend -f "C:\Users\Jr\Downloads\STM32Cube_FW_F4_V1.3.0\Projects\STM32F4-Discovery\Examples\ADC\ADC_RegularConversion_DMA\EWARM\settings\Project.STM32F4-Discovery.driver.xcl" 
-
-@echo off 
-:end

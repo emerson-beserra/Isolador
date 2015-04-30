@@ -42,6 +42,11 @@
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 #include "stm32f4_discovery.h"
+#include <stdint.h>
+#include <stdbool.h>
+#include "arm_math.h"
+#include "arm_const_structs.h"
+
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
