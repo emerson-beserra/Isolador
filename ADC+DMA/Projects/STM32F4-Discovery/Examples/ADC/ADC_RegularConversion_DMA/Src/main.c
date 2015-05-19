@@ -49,12 +49,25 @@
   */ 
 
 /* Private typedef -----------------------------------------------------------*/
+    typedef enum State_Type
+    {
+      CONFIGURADO = 0,
+      DADOS_CAPTURADOS,
+      DADOS_SALVOS,
+      USOM_PROCESSADO,
+      RF_PROCESSADO,
+      RNA_REPOSTA,
+      REPOSTA_ARMAZENADA,
+      INFO_TRANSMITIDA
+    };
+
 /* Private define ------------------------------------------------------------*/
 #define SAMPLES_SIZE 4096
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* ADC handler declaration */
 ADC_HandleTypeDef    AdcHandle;
+State_Type estadoAtual;
 
 /* Variable used to get converted value */
 __IO uint32_t uhADCxConvertedValue[SAMPLES_SIZE];
@@ -75,6 +88,8 @@ static float fft_out[SAMPLES_SIZE];
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
+void (*tabela_estados[8]) () = {Configurado, DadosCapturados, DadosSalvos, UsomProcessado, Rf_Processado, 
+                  RnaResposta, RespostaArmazenada, InfoTransmitida};
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -265,6 +280,23 @@ void assert_failed(uint8_t* file, uint32_t line)
 }
 
 #endif
+
+void Configurado()
+{}
+void DadosCapturados()
+{} 
+void DadosSalvos()
+{} 
+void UsomProcessado()
+{} 
+void Rf_Processado()
+{}
+void RnaResposta()
+{} 
+void RespostaArmazenada()
+{} 
+void InfoTransmitida()
+{}
 
 /**
   * @}
