@@ -40,6 +40,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_it.h"
+
+extern HCD_HandleTypeDef hhcd;
    
 
 /** @addtogroup STM32F4xx_HAL_Examples
@@ -176,6 +178,16 @@ void SysTick_Handler(void)
 void ADCx_DMA_IRQHandler(void)
 {
   HAL_DMA_IRQHandler(AdcHandle.DMA_Handle);
+}
+
+/**
+  * @brief  This function handles USB-On-The-Go FS global interrupt requests.
+  * @param  None
+  * @retval None
+  */
+void OTG_FS_IRQHandler(void)
+{
+  HAL_HCD_IRQHandler(&hhcd);
 }
 
 /**

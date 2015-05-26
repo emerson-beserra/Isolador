@@ -53,6 +53,19 @@
 #define SAMPLES_SIZE 4096
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+FATFS USBDISKFatFs;           /* File system object for USB disk logical drive */
+FIL MyFile;                   /* File object */
+char USBDISKPath[4];          /* USB Host logical drive path */
+USBH_HandleTypeDef hUSB_Host; /* USB Host handle */
+
+typedef enum {
+  APPLICATION_IDLE = 0,  
+  APPLICATION_START,    
+  APPLICATION_RUNNING,
+}MSC_ApplicationTypeDef;
+
+MSC_ApplicationTypeDef Appli_state = APPLICATION_IDLE;
+
 /* ADC handler declaration */
 ADC_HandleTypeDef    AdcHandle;
 
@@ -75,6 +88,10 @@ static float fft_out[SAMPLES_SIZE];
 /* Private function prototypes -----------------------------------------------*/
 static void SystemClock_Config(void);
 static void Error_Handler(void);
+
+static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id);
+
+static void write_register_in_file( const float raw_data[], const uint32_t size_raw_data );
 
 /* Private functions ---------------------------------------------------------*/
 
@@ -154,12 +171,99 @@ int main(void)
           arm_rfft_fast_init_f32( &S, SAMPLES_SIZE );
           arm_rfft_fast_f32( &S, ( float * ) uhADCxConvertedValue, fft_out, 0 );
           /* after this point the result of fft wil be in fft_out */
+          
+          if(FATFS_LinkDriver(&USBH_Driver, USBDISKPath) == 0)
+          {
+            /*##-2- Init Host Library ################################################*/
+            USBH_Init(&hUSB_Host, USBH_UserProcess, 0);
+            
+            /*##-3- Add Supported Class ##############################################*/
+            USBH_RegisterClass(&hUSB_Host, USBH_MSC_CLASS);
+            
+            /*##-4- Start Host Process ###############################################*/
+            USBH_Start(&hUSB_Host);
+            
+            /*##-5- Run Application (Blocking mode) ##################################*/
+            /* USB Host Background task */
+            USBH_Process(&hUSB_Host);
+  
+            f_mount(&USBDISKFatFs, (TCHAR const*)USBDISKPath, 0);
+            write_register_in_file( ( float const* ) uhADCxConvertedValue, SAMPLES_SIZE );
+            FATFS_UnLinkDriver(USBDISKPath);
+            
+          }
       }
       else
       {
       }/* end if-else */
   }
 }
+
+
+static void write_register_in_file( const float raw_data[], const uint32_t size_raw_data )
+{
+  static uint32_t name_file = 0;
+  uint8_t name_file_str[8];
+  uint32_t idx_array = 0;
+  uint8_t buffer[64];
+  
+  sprintf( ( char* ) name_file_str, "%d.csv", name_file );
+  
+  if( f_open( &MyFile, ( char const* ) name_file_str, FA_CREATE_ALWAYS | FA_WRITE) != FR_OK ) 
+  {
+  }
+  else
+  {
+    f_puts( "indice, valores\r\n", &MyFile );
+      
+    for( idx_array = 0; idx_array < size_raw_data; idx_array++ )
+    {
+      sprintf( ( char* ) buffer, "%d, %f \r\n", idx_array, raw_data[idx_array] ); 
+      f_puts( ( char* ) buffer, &MyFile );
+    }/* end if-else */
+    
+    f_close( &MyFile );
+    ++name_file; /* file write succesfully, inc the name to the next file */
+    if( name_file > 1000 )
+    {
+      name_file = 0;
+    }
+    else
+    {
+    }/* end if-else */
+  }/* end if-else */
+  
+}/*end write_register_in_file()-----------------------------------------------*/
+
+/**
+  * @brief  User Process
+  * @param  phost: Host handle
+  * @param  id: Host Library user message ID
+  * @retval None
+  */
+static void USBH_UserProcess(USBH_HandleTypeDef *phost, uint8_t id)
+{  
+  switch(id)
+  { 
+  case HOST_USER_SELECT_CONFIGURATION:
+    break;
+    
+  case HOST_USER_DISCONNECTION:
+  // Appli_state = APPLICATION_IDLE;
+    BSP_LED_Off(LED4); 
+    BSP_LED_Off(LED5);  
+    f_mount(NULL, (TCHAR const*)"", 0);          
+    break;
+    
+  case HOST_USER_CLASS_ACTIVE:
+    //Appli_state = APPLICATION_START;
+    break;
+    
+  default:
+    break; 
+  }
+}
+
 
 /**
   * @brief  System Clock Configuration

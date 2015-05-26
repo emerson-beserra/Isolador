@@ -47,6 +47,9 @@
 #include "arm_math.h"
 #include "arm_const_structs.h"
 
+/* FatFs includes component */
+#include "ff_gen_drv.h"
+#include "usbh_diskio.h"
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported constants --------------------------------------------------------*/
